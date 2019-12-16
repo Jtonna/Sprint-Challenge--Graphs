@@ -8,7 +8,6 @@ from ast import literal_eval
 # Load world
 world = World()
 
-
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
@@ -29,7 +28,11 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
-
+'''
+create an variable for moving with key/value pairs for possible moves -> north, east, south, west
+keep track of rooms visited (in a dict)
+keep track of the path (in reverse??)
+'''
 
 # TRAVERSAL TEST
 visited_rooms = set()

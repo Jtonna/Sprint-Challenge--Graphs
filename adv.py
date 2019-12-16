@@ -32,6 +32,23 @@ traversal_path = []
 create an variable for moving with key/value pairs for possible moves -> north, east, south, west
 keep track of rooms visited (in a dict)
 keep track of the path (in reverse??)
+
+while length(rooms) is bigger than the room graph
+    if the room is not in the rooms visited dict
+        get the rooms's exits
+        add the last direction we moved into the reversed path
+        remove the last direction from the rooms dict
+
+    while the lengths of the room id is bigger than one
+        pop from the path
+        append reverse to the traversal path
+        make the player travel the reverse
+
+    pop the room from the roomds dict
+    make the player travel to the exit direction
+
+    if the length of the room graph is 1
+        get exits
 '''
 
 # TRAVERSAL TEST

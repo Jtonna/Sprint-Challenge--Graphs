@@ -53,3 +53,14 @@ world.printRooms()
 print(" MAP -------------")
 
 player = Player("Name", world.startingRoom)
+
+# Fill this out
+traversalPath = []
+
+''' Setting variables and data containers '''
+current = player.currentRoom.id
+reversePath = []
+visited_rooms = set()
+player.currentRoom = world.startingRoom
+visited_rooms.add(player.currentRoom.id)
+fastPath = []

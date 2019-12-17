@@ -64,3 +64,104 @@ visited_rooms = set()
 player.currentRoom = world.startingRoom
 visited_rooms.add(player.currentRoom.id)
 fastPath = []
+traversalGraph = {}
+goBack = {}
+
+''' Traversal graph that replaces directions with with ?'s '''
+for i in range(len(roomGraph)):
+    copy = roomGraph[i][1].copy()
+    if 'n' in copy:
+        copy['n'] = '?'
+    if 's' in copy:
+        copy['s'] = '?'
+    if 'e' in copy:
+        copy['e'] = '?'
+    if 'w' in copy:
+        copy['w'] = '?'
+    traversalGraph[i] = copy
+
+''' Shallow copy of the graph'''
+for i in range(len(roomGraph)):
+    copy = roomGraph[i][1].copy()
+    goBack[i] = {value:key for key, value in copy.items()}
+
+''' stack stuff '''
+stack = Stack()
+stack.push(player.currentRoom.id)
+
+''' DFT & BFS working together. '''
+def dft(current=player.currentRoom.id):
+
+    # must convert graph to string to check if '?' is in it
+    string = json.dumps(traversalGraph[current])
+
+    while '?' in string:
+        direction = [] 
+
+        for d in traversalGraph[current]:
+            if traversalGraph[current][d] == '?':
+                direction.append(d)
+            
+        move = random.choice(direction)
+       
+        if move == 'n':
+            traversalGraph[current]['n'] = roomGraph[current][1]['n']
+            player.travel('n')
+            traversalPath.append(move)
+            current = player.currentRoom.id
+            traversalGraph[current]['s'] = roomGraph[current][1]['s']
+            string = json.dumps(traversalGraph[current])
+        elif move == 's':
+            traversalGraph[current]['s'] = roomGraph[current][1]['s']
+            player.travel('s')
+            traversalPath.append(move)
+            current = player.currentRoom.id
+            traversalGraph[current]['n'] = roomGraph[current][1]['n']
+            string = json.dumps(traversalGraph[current])
+        elif move == 'e':
+            traversalGraph[current]['e'] = roomGraph[current][1]['e']
+            player.travel('e')
+            traversalPath.append(move)
+            current = player.currentRoom.id
+            traversalGraph[current]['w'] = roomGraph[current][1]['w']
+            string = json.dumps(traversalGraph[current])
+        elif move == 'w':
+            traversalGraph[current]['w'] = roomGraph[current][1]['w']
+            player.travel('w')
+            traversalPath.append(move)
+            current = player.currentRoom.id
+            traversalGraph[current]['e'] = roomGraph[current][1]['e']
+            string = json.dumps(traversalGraph[current])
+
+    return bfs(current)
+
+def bfs(current=player.currentRoom.id):
+    queue = Queue()
+    visited = set()
+    queue.enqueue([current])
+    while queue.size() > 0:
+        path = queue.dequeue()
+        v = path[-1]
+
+        # convert to string to check for ? like before
+        string = json.dumps(traversalGraph[v])
+
+        if v not in visited:
+            if '?' in string:
+                for x in range(len(path) - 1): 
+                    rewind = goBack[path[x]][path[x+1]] 
+                    player.travel(rewind)
+                    traversalPath.append(rewind)
+                    current = player.currentRoom.id 
+
+                return dft(current) # Go back to a dft
+            visited.add(v)
+            for neighbor in roomGraph[v][1]:
+       
+                    path_copy = path.copy()
+                    path_copy.append(roomGraph[v][1][neighbor])
+                    queue.enqueue(path_copy)
+    
+    print(traversalGraph)
+   
+dft(player.currentRoom.id)

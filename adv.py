@@ -165,3 +165,18 @@ def bfs(current=player.currentRoom.id):
     print(traversalGraph)
    
 dft(player.currentRoom.id)
+
+# TRAVERSAL TEST
+visited_rooms = set()
+player.currentRoom = world.startingRoom
+visited_rooms.add(player.currentRoom)
+
+for move in traversalPath:
+    player.travel(move)
+    visited_rooms.add(player.currentRoom)
+
+if len(visited_rooms) == len(roomGraph):
+    print(f"TESTS PASSED: {len(traversalPath)} moves, {len(visited_rooms)} rooms visited")
+else:
+    print("TESTS FAILED: INCOMPLETE TRAVERSAL")
+    print(f"{len(roomGraph) - len(visited_rooms)} unvisited rooms")

@@ -5,6 +5,32 @@ from world import World
 import random
 from ast import literal_eval
 
+class Queue():
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+
+class Stack():
+    def __init__(self):
+        self.stack = []
+    def push(self, value):
+        self.stack.append(value)
+    def pop(self):
+        if self.size() > 0:
+            return self.stack.pop()
+        else:
+            return None
+    def size(self):
+        return len(self.stack)
+
 # Load world
 world = World()
 
@@ -26,30 +52,49 @@ player = Player(world.starting_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
-traversal_path = []
+traversalPath = []
 
-'''
-create an variable for moving with key/value pairs for possible moves -> north, east, south, west
-keep track of rooms visited (in a dict)
-keep track of the path (in reverse??)
+backwardsDirections = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
 
-while length(rooms) is bigger than the room graph
-    if the room is not in the rooms visited dict
-        get the rooms's exits
-        add the last direction we moved into the reversed path
-        remove the last direction from the rooms dict
+reversePath = [None]
 
-    while the lengths of the room id is bigger than one
-        pop from the path
-        append reverse to the traversal path
-        make the player travel the reverse
+rooms = {}
 
-    pop the room from the roomds dict
-    make the player travel to the exit direction
+roomsdict = {}
 
-    if the length of the room graph is 1
-        get exits
-'''
+rooms[0] = player.current_room.getExits()
+
+roomsdict[0] = player.current_room.getExits()
+
+while len(rooms) < len(roomGraph)-1:
+    print(f"rooms length:{len(rooms)} < room graph len:{len(roomGraph)} -1 ")
+    if player.current_room.id not in rooms:
+        print(f"    room:{player.current_room.id} is not in rooms dict.")
+        rooms[player.current_room.id] = player.current_room.getExits()
+        roomsdict[player.current_room.id] = player.current_room.getExits()
+        lastDirection = reversePath[-1]
+        roomsdict[player.current_room.id].remove(lastDirection)
+        print(f"        Just removed {lastDirection} from the roomsdict")
+
+    while len(roomsdict[player.current_room.id]) < 1:
+        print(f"the room's id:{len(roomsdict[player.current_room.id])} is < 1")
+        reverse = reversePath.pop()
+        traversalPath.append(reverse)
+        player.travel(reverse)
+        print(f"    Just popped from the reverse path & appended the traversal path: {reverse}\n    Making the player travel the path now")
+
+
+    exit_dir = roomsdict[player.current_room.id].pop(0)
+    traversalPath.append(exit_dir)
+    reversePath.append(backwardsDirections[exit_dir])
+    player.travel(exit_dir)
+
+    if len(roomGraph) - len(rooms) ==1:
+        print(f"room graph length:{len(roomGraph)} - room len:{len(room)} is 1. \ngetting exits for the current room")
+        rooms[player.current_room.id] = player.current_room.getExits()
+        print(f"{player.current_room.getExits()}")
+
+
 
 # TRAVERSAL TEST
 visited_rooms = set()

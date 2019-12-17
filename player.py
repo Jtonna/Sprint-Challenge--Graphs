@@ -1,4 +1,4 @@
-lass Player:
+class Player:
     def __init__(self, name, startingRoom):
         self.name = name
         self.currentRoom = startingRoom
